@@ -170,15 +170,6 @@ pytest
 MAHE_LOG_LEVEL=DEBUG mahe
 ```
 
-## Roadmap
-
-- **Phase 1 (MVP)**: Core CLI, Agent loop, tools, multi-model support ✅
-- **Phase 2**: Tree-sitter code parsing, Jedi completions, advanced code tools
-- **Phase 3**: Three-tier memory (short/mid/long), vector DB integration
-- **Phase 4**: Parallel SubAgent execution, dynamic workflows
-- **Phase 5**: Plugin system, MCP integration
-- **Phase 6**: Enterprise features (SLA, audit, SSO)
-
 ## License
 
 MIT
