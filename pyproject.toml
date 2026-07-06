@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mahe"
+name = "codeassistant"
 version = "0.2.0"
-description = "MAHE - AI-powered terminal CLI programming assistant"
+description = "CodeAssistant - AI-powered terminal CLI programming assistant"
 requires-python = ">=3.11"
 dependencies = [
     "click>=8.1",
@@ -30,10 +30,10 @@ dev = [
 ]
 
 [project.scripts]
-mahe = "mahe.main:main"
+codeassistant = "codeassistant.main:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mahe"]
+packages = ["src/codeassistant"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

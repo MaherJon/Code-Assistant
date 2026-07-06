@@ -1,6 +1,6 @@
-# MAHE - AI-Powered Terminal Programming Assistant
+# CodeAssistant - AI-Powered Terminal Programming Assistant
 
-MAHE is an AI-powered CLI programming assistant that runs in your terminal. It helps you write, understand, and improve code — inspired by Claude Code, built with Python.
+CodeAssistant is an AI-powered CLI programming assistant that runs in your terminal. It helps you write, understand, and improve code — inspired by Claude Code, built with Python.
 
 ## Features
 
@@ -13,7 +13,7 @@ MAHE is an AI-powered CLI programming assistant that runs in your terminal. It h
 - **Permission System**: Three-tier safety (safe auto-run, confirm, blocked)
 - **Streaming Output**: Real-time response display
 - **Smart Context Compression**: Auto-summarize long conversations at 92% token threshold
-- **Persistent Memory**: `.mahe/memory/` for project knowledge across sessions
+- **Persistent Memory**: `.codeassistant/memory/` for project knowledge across sessions
 - **Semantic Code Search**: Vector-based natural language search with Chroma DB
 - **Code Intelligence**: Multi-language AST parsing (tree-sitter) + Python code intelligence (Jedi)
 - **Test Automation**: Run tests and auto-analyze failures
@@ -47,40 +47,40 @@ export OPENAI_API_KEY="sk-..."
 # Anthropic Claude
 export ANTHROPIC_API_KEY="sk-ant-..."
 
-# Or use the unified MAHE key
-export MAHE_API_KEY="sk-..."
+# Or use the unified CodeAssistant key
+export CodeAssistant_API_KEY="sk-..."
 ```
 
 ## Quick Start
 
 ```bash
 # Launch interactive REPL (default: gpt-4o via OpenAI)
-mahe
+codeassistant
 
 # Launch with a specific model
-mahe --model claude-sonnet-5 --provider anthropic
+codeassistant --model claude-sonnet-5 --provider anthropic
 
 # Launch with a DeepSeek model
-mahe --model deepseek-chat --provider deepseek
+codeassistant --model deepseek-chat --provider deepseek
 
 # Index project for semantic code search
-mahe index
+codeassistant index
 
 # One-shot question (no REPL)
-mahe ask "what does git status do?"
+codeassistant ask "what does git status do?"
 
 # Manage MCP servers
-mahe mcp list
-mahe mcp serve
+codeassistant mcp list
+codeassistant mcp serve
 
 # View/change configuration
-mahe config --list
-mahe config --set model gpt-4o
+codeassistant config --list
+codeassistant config --set model gpt-4o
 ```
 
 ## Usage
 
-Once in the REPL, type your questions naturally. MAHE can:
+Once in the REPL, type your questions naturally. CodeAssistant can:
 
 - **Read code**: "Show me the login function in auth.py"
 - **Write code**: "Create a hello.py file with a hello world function"
@@ -99,11 +99,11 @@ Once in the REPL, type your questions naturally. MAHE can:
 | `/model <name>` | Switch model (e.g., `/model gpt-4o`) |
 | `/provider <name>` | Switch provider |
 | `/mode` | Toggle permission mode (prompt/auto_safe) |
-| `/exit` | Exit MAHE |
+| `/exit` | Exit CodeAssistant |
 
 ## Project Configuration
 
-Create a `.aiassist.md` file in your project root to give MAHE context about your project:
+Create a `.aiassist.md` file in your project root to give CodeAssistant context about your project:
 
 ```markdown
 # My Awesome Project
@@ -125,7 +125,7 @@ Tech stack: Python 3.12, FastAPI, PostgreSQL
 ## Architecture
 
 ```
-src/mahe/
+src/codeassistant/
 ├── cli/          # CLI interface (Click, prompt_toolkit, Rich)
 │   ├── commands.py
 │   ├── repl.py       # Interactive REPL loop
@@ -167,7 +167,7 @@ pip install -e ".[dev]"
 pytest
 
 # Run with debug logging
-MAHE_LOG_LEVEL=DEBUG mahe
+CodeAssistant_LOG_LEVEL=DEBUG codeassistant
 ```
 
 ## License

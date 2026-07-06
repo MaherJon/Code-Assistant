@@ -1,4 +1,4 @@
-"""Shared test fixtures for MAHE."""
+"""Shared test fixtures for CodeAssistant."""
 
 import os
 import tempfile
@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from mahe.tools.base import ToolRegistry
-from mahe.tools.file_tools import ReadFile, WriteFile, EditFile, GlobTool, GrepTool
-from mahe.utils.sandbox import Sandbox
-from mahe.utils.permissions import PermissionChecker, PermissionPolicy
+from codeassistant.tools.base import ToolRegistry
+from codeassistant.tools.file_tools import ReadFile, WriteFile, EditFile, GlobTool, GrepTool
+from codeassistant.utils.sandbox import Sandbox
+from codeassistant.utils.permissions import PermissionChecker, PermissionPolicy
 from tests.helpers import MockLLMAdapter
 
 

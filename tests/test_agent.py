@@ -2,15 +2,15 @@
 
 import pytest
 
-from mahe.core.agent import ReActAgent, AgentState
-from mahe.core.prompts import build_system_prompt
-from mahe.llm.adapter import LLMResponse, ToolCall
-from mahe.context.memory import SessionMemory
-from mahe.context.manager import ContextBuilder
-from mahe.context.project import ProjectConfig
-from mahe.tools.base import ToolRegistry
-from mahe.tools.file_tools import ReadFile, WriteFile
-from mahe.utils.permissions import PermissionChecker, PermissionPolicy
+from codeassistant.core.agent import ReActAgent, AgentState
+from codeassistant.core.prompts import build_system_prompt
+from codeassistant.llm.adapter import LLMResponse, ToolCall
+from codeassistant.context.memory import SessionMemory
+from codeassistant.context.manager import ContextBuilder
+from codeassistant.context.project import ProjectConfig
+from codeassistant.tools.base import ToolRegistry
+from codeassistant.tools.file_tools import ReadFile, WriteFile
+from codeassistant.utils.permissions import PermissionChecker, PermissionPolicy
 
 from tests.helpers import MockLLMAdapter
 
@@ -203,7 +203,7 @@ class TestBuildSystemPrompt:
     def test_basic_prompt(self):
         prompt = build_system_prompt("/test/dir")
         assert "/test/dir" in prompt
-        assert "MAHE" in prompt
+        assert "CodeAssistant" in prompt
 
     def test_with_project_context(self):
         prompt = build_system_prompt("/test/dir", "Project: My App")

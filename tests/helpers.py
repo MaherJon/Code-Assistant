@@ -2,7 +2,7 @@
 
 from typing import Any, AsyncIterator, Dict, List, Optional
 
-from mahe.llm.adapter import LLMAdapter, LLMResponse, LLMStreamChunk
+from codeassistant.llm.adapter import LLMAdapter, LLMResponse, LLMStreamChunk
 
 
 class MockLLMAdapter(LLMAdapter):

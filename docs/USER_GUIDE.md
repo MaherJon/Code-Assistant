@@ -1,4 +1,4 @@
-# MAHE 用户指南 / MAHE User Guide
+# CodeAssistant 用户指南 / CodeAssistant User Guide
 
 > AI-Powered Terminal Programming Assistant / AI 驱动的终端编程助手
 
@@ -24,26 +24,26 @@
 export OPENAI_API_KEY="sk-..."
 
 # 启动 REPL / Launch REPL
-mahe
+codeassistant
 
 # 指定模型 / With specific model
-mahe --model claude-sonnet-5 --provider anthropic
-mahe --model deepseek-chat --provider deepseek
+codeassistant --model claude-sonnet-5 --provider anthropic
+codeassistant --model deepseek-chat --provider deepseek
 
 # 单次问答 / One-shot question
-mahe ask "这段代码是做什么的？"              # What does this code do?
-mahe ask "帮我写一个快速排序函数"             # Write a quicksort function
+codeassistant ask "这段代码是做什么的？"              # What does this code do?
+codeassistant ask "帮我写一个快速排序函数"             # Write a quicksort function
 
 # 索引项目 / Index project for semantic search
-mahe index
+codeassistant index
 
 # 定时任务 / Scheduled task
-mahe loop start 5m "检查构建状态"           # Check build status every 5 min
-mahe loop once 10m "提醒我提交代码"          # Remind me to commit in 10 min
+codeassistant loop start 5m "检查构建状态"           # Check build status every 5 min
+codeassistant loop once 10m "提醒我提交代码"          # Remind me to commit in 10 min
 
 # MCP 服务器管理 / MCP server management
-mahe mcp list
-mahe mcp serve
+codeassistant mcp list
+codeassistant mcp serve
 ```
 
 ---
@@ -59,7 +59,8 @@ mahe mcp serve
 
 ```bash
 # 克隆项目 / Clone
-cd /path/to/MAHE-AI-Assistant
+git clone https://github.com/MaherJon/Code-Assistant.git
+cd /path/to/CodeAssistant-AI-Assistant
 
 # 安装 (开发模式) / Install (dev mode)
 pip install -e .
@@ -75,9 +76,9 @@ pip install chromadb
 | 方式 Method | 示例 Example |
 |---|---|
 | 环境变量 Env Var | `export OPENAI_API_KEY="sk-..."` |
-| 统一变量 Unified | `export MAHE_API_KEY="sk-..."` |
-| 配置文件 Config | `mahe config --set api_key sk-...` |
-| CLI 参数 CLI Flag | `mahe --api-key sk-...` |
+| 统一变量 Unified | `export CodeAssistant_API_KEY="sk-..."` |
+| 配置文件 Config | `codeassistant config --set api_key sk-...` |
+| CLI 参数 CLI Flag | `codeassistant --api-key sk-...` |
 
 支持的提供商 / Supported providers:
 
@@ -86,14 +87,14 @@ export OPENAI_API_KEY="sk-..."          # OpenAI (GPT-4o, GPT-4o-mini)
 export ANTHROPIC_API_KEY="sk-ant-..."   # Anthropic Claude
 export DEEPSEEK_API_KEY="sk-..."        # DeepSeek
 # 或使用自定义 API Base / Or custom API base
-export MAHE_API_BASE="https://your-api.com/v1"
+export CodeAssistant_API_BASE="https://your-api.com/v1"
 ```
 
 ### 2.4 项目配置 / Project Config
 
-在项目根目录创建 `.aiassist.md` 文件，MAHE 启动时会自动加载作为上下文：
+在项目根目录创建 `.aiassist.md` 文件，CodeAssistant 启动时会自动加载作为上下文：
 
-Create `.aiassist.md` in your project root, MAHE loads it as context:
+Create `.aiassist.md` in your project root, CodeAssistant loads it as context:
 
 ```markdown
 # 项目名称 / My Project
@@ -117,54 +118,54 @@ Create `.aiassist.md` in your project root, MAHE loads it as context:
 
 ```bash
 # 交互式 REPL（推荐）/ Interactive REPL (recommended)
-mahe
+codeassistant
 
 # 单次问答 / One-shot
-mahe ask "查看 git 状态"                    # Show git status
-mahe ask "src/auth.py 里有什么函数？"        # What functions are in auth.py?
+codeassistant ask "查看 git 状态"                    # Show git status
+codeassistant ask "src/auth.py 里有什么函数？"        # What functions are in auth.py?
 
 # 查看配置 / View config
-mahe config --list
+codeassistant config --list
 
 # 修改配置 / Change config
-mahe config --set model gpt-4o-mini
-mahe config --set provider deepseek
+codeassistant config --set model gpt-4o-mini
+codeassistant config --set provider deepseek
 
 # 索引项目（语义搜索）/ Index project (semantic search)
-mahe index
-mahe index --update                          # 增量更新 / Incremental update
+codeassistant index
+codeassistant index --update                          # 增量更新 / Incremental update
 
 # 定时任务 / Scheduled tasks
-mahe loop start 5m "检查 CI 状态"           # Every 5 minutes
-mahe loop start 1h "拉取最新代码并测试"      # Every hour
-mahe loop list                               # 查看运行中的任务
-mahe loop once 30m "提醒我休息"              # One-shot after 30 min
+codeassistant loop start 5m "检查 CI 状态"           # Every 5 minutes
+codeassistant loop start 1h "拉取最新代码并测试"      # Every hour
+codeassistant loop list                               # 查看运行中的任务
+codeassistant loop once 30m "提醒我休息"              # One-shot after 30 min
 
 # MCP 管理 / MCP management
-mahe mcp list                                # 列出配置的服务器
-mahe mcp serve                               # 启动 MCP 服务器
+codeassistant mcp list                                # 列出配置的服务器
+codeassistant mcp serve                               # 启动 MCP 服务器
 ```
 
 ### 3.2 常用交互示例 / Common Interactions
 
 ```
-mahe> 帮我看看这个项目是什么结构
-mahe> What's the structure of this project?
+codeassistant> 帮我看看这个项目是什么结构
+codeassistant> What's the structure of this project?
 
-mahe> 在 src/api/users.py 里添加一个 GET /users/:id 接口
-mahe> Add a GET /users/:id endpoint in src/api/users.py
+codeassistant> 在 src/api/users.py 里添加一个 GET /users/:id 接口
+codeassistant> Add a GET /users/:id endpoint in src/api/users.py
 
-mahe> 这个函数有 bug，帮我修复：def divide(a, b): return a/b
-mahe> Fix this buggy function: def divide(a, b): return a/b
+codeassistant> 这个函数有 bug，帮我修复：def divide(a, b): return a/b
+codeassistant> Fix this buggy function: def divide(a, b): return a/b
 
-mahe> 运行测试，把失败的都修好
-mahe> Run the tests and fix all failures
+codeassistant> 运行测试，把失败的都修好
+codeassistant> Run the tests and fix all failures
 
-mahe> 帮我在整个项目中找到所有使用旧 API 的地方
-mahe> Find all places using the deprecated API across the project
+codeassistant> 帮我在整个项目中找到所有使用旧 API 的地方
+codeassistant> Find all places using the deprecated API across the project
 
-mahe> 提交这些改动，写一个规范的 commit message
-mahe> Commit these changes with a proper commit message
+codeassistant> 提交这些改动，写一个规范的 commit message
+codeassistant> Commit these changes with a proper commit message
 ```
 
 ---
@@ -208,7 +209,7 @@ mahe> Commit these changes with a proper commit message
 
 ## 5. 工具系统 / Tool System
 
-MAHE 配备了 22 个内置工具，分类如下：
+CodeAssistant 配备了 22 个内置工具，分类如下：
 
 ### 5.1 文件工具 / File Tools
 
@@ -262,14 +263,14 @@ MAHE 配备了 22 个内置工具，分类如下：
 
 ### 6.1 SubAgent 并行协作 / Parallel SubAgent Collaboration
 
-MAHE 可将复杂任务拆分给多个并行子 Agent：
+CodeAssistant 可将复杂任务拆分给多个并行子 Agent：
 
 ```
-mahe> 从正确性、安全性和性能三个角度审查 src/auth.py
-mahe> Review src/auth.py from correctness, security, and performance angles
+codeassistant> 从正确性、安全性和性能三个角度审查 src/auth.py
+codeassistant> Review src/auth.py from correctness, security, and performance angles
 ```
 
-MAHE 会同时启动 3 个专业 SubAgent：
+CodeAssistant 会同时启动 3 个专业 SubAgent：
 - `code-reviewer`：检查逻辑错误和代码风格
 - `security-auditor`：扫描安全漏洞
 - `code-explorer`：分析完整性和依赖关系
@@ -288,46 +289,46 @@ MAHE 会同时启动 3 个专业 SubAgent：
 
 ```bash
 # 1. 先索引项目
-mahe index
+codeassistant index
 
 # 2. 在 REPL 中用自然语言搜索
-mahe> 找到处理用户认证的代码在哪里
-mahe> Find where authentication logic is implemented
+codeassistant> 找到处理用户认证的代码在哪里
+codeassistant> Find where authentication logic is implemented
 ```
 
-索引文件存储在 `.mahe/vectors/` 目录，使用 Chroma 向量数据库。
+索引文件存储在 `.codeassistant/vectors/` 目录，使用 Chroma 向量数据库。
 
 ### 6.3 上下文压缩 / Context Compression
 
-当对话超过 92% 上下文窗口时，MAHE 会自动用 LLM 压缩旧消息为摘要，保留关键技术细节。你无需任何操作。
+当对话超过 92% 上下文窗口时，CodeAssistant 会自动用 LLM 压缩旧消息为摘要，保留关键技术细节。你无需任何操作。
 
 ### 6.4 持久记忆 / Persistent Memory
 
 ```bash
-# MAHE 会记住项目相关的知识
-mahe> 记住：这个项目使用 PostgreSQL，不要用 SQLite
-mahe> Remember: this project uses PostgreSQL, never use SQLite
+# CodeAssistant 会记住项目相关的知识
+codeassistant> 记住：这个项目使用 PostgreSQL，不要用 SQLite
+codeassistant> Remember: this project uses PostgreSQL, never use SQLite
 
-# 下次会话 MAHE 会自动加载这些记忆
-mahe> 数据库用什么？  # MAHE: PostgreSQL（从记忆读取）
+# 下次会话 CodeAssistant 会自动加载这些记忆
+codeassistant> 数据库用什么？  # CodeAssistant: PostgreSQL（从记忆读取）
 ```
 
-记忆存储在 `.mahe/memory/` 目录，可手动编辑。
+记忆存储在 `.codeassistant/memory/` 目录，可手动编辑。
 
 ### 6.5 定时任务 (Loop) / Scheduled Tasks
 
 ```bash
 # 每 5 分钟检查构建状态
-mahe loop start 5m "运行 pytest 并报告结果"
+codeassistant loop start 5m "运行 pytest 并报告结果"
 
 # 每天拉取最新代码并测试
-mahe loop start 1h "git pull && pytest"
+codeassistant loop start 1h "git pull && pytest"
 
 # 30 分钟后提醒
-mahe loop once 30m "记得提交代码"
+codeassistant loop once 30m "记得提交代码"
 
 # 查看运行中的任务
-mahe loop list
+codeassistant loop list
 
 # REPL 中也可以管理
 /loop start 10m 检查服务器状态
@@ -340,7 +341,7 @@ mahe loop list
 连接外部工具（数据库、文件系统、API 等）：
 
 ```yaml
-# ~/.mahe/mcp_servers.yaml
+# ~/.codeassistant/mcp_servers.yaml
 servers:
   - name: database
     command: python
@@ -350,8 +351,8 @@ servers:
 ```
 
 ```bash
-mahe mcp list     # 查看配置的服务器
-mahe mcp serve    # 启动 MCP 服务器，工具自动注册到 MAHE
+codeassistant mcp list     # 查看配置的服务器
+codeassistant mcp serve    # 启动 MCP 服务器，工具自动注册到 CodeAssistant
 ```
 
 ### 6.7 工作流引擎 / Workflow Engine
@@ -359,7 +360,7 @@ mahe mcp serve    # 启动 MCP 服务器，工具自动注册到 MAHE
 开发者可通过 Python API 组合工作流：
 
 ```python
-from mahe.core.workflow import WorkflowEngine, WorkflowStage
+from codeassistant.core.workflow import WorkflowEngine, WorkflowStage
 
 engine = WorkflowEngine()
 
@@ -387,15 +388,15 @@ results = await engine.fanout(
 |---|---|
 | `OPENAI_API_KEY` | OpenAI API 密钥 |
 | `ANTHROPIC_API_KEY` | Anthropic API 密钥 |
-| `MAHE_API_KEY` | 通用 API 密钥（最高优先级） |
-| `MAHE_API_BASE` | 自定义 API 基础 URL |
-| `MAHE_MODEL` | 默认模型名称 |
-| `MAHE_PROVIDER` | 默认提供商 |
-| `MAHE_PERMISSION_MODE` | 权限模式 (prompt / auto_safe) |
+| `CodeAssistant_API_KEY` | 通用 API 密钥（最高优先级） |
+| `CodeAssistant_API_BASE` | 自定义 API 基础 URL |
+| `CodeAssistant_MODEL` | 默认模型名称 |
+| `CodeAssistant_PROVIDER` | 默认提供商 |
+| `CodeAssistant_PERMISSION_MODE` | 权限模式 (prompt / auto_safe) |
 
 ### 7.2 配置文件 / Config File
 
-`~/.mahe/config.yaml`:
+`~/.codeassistant/config.yaml`:
 
 ```yaml
 provider: openai
@@ -413,9 +414,9 @@ permission_mode: prompt
 技术栈和架构说明...
 ```
 
-`.mahe/memory/*.md` — 持久化记忆文件
+`.codeassistant/memory/*.md` — 持久化记忆文件
 
-`.mahe/vectors/` — 语义搜索索引
+`.codeassistant/vectors/` — 语义搜索索引
 
 ---
 
@@ -425,8 +426,8 @@ permission_mode: prompt
 
 ```bash
 # 命令行
-mahe --model gpt-4o-mini
-mahe --model claude-sonnet-5 --provider anthropic
+codeassistant --model gpt-4o-mini
+codeassistant --model claude-sonnet-5 --provider anthropic
 
 # REPL 内
 /model gpt-4o-mini
@@ -440,13 +441,13 @@ mahe --model claude-sonnet-5 --provider anthropic
 ```bash
 export OPENAI_API_BASE="http://localhost:11434/v1"
 export OPENAI_API_KEY="ollama"
-mahe --model ollama/llama3
+codeassistant --model ollama/llama3
 ```
 
-### Q: 如何让 MAHE 自动执行安全操作？ / How to auto-allow safe ops?
+### Q: 如何让 CodeAssistant 自动执行安全操作？ / How to auto-allow safe ops?
 
 ```bash
-mahe --permission-mode auto_safe
+codeassistant --permission-mode auto_safe
 # 或 REPL 内 /mode
 ```
 
@@ -462,7 +463,7 @@ Loop 在 REPL 进程内运行。关闭 REPL 后 Loop 也会停止。适合开发
 
 ```bash
 pip install chromadb
-mahe index   # 索引当前项目
+codeassistant index   # 索引当前项目
 ```
 
 ### Q: 如何贡献？ / How to contribute?
@@ -471,6 +472,6 @@ mahe index   # 索引当前项目
 
 ---
 
-> **MAHE** — 终端里的 Python 原生智能编程伙伴
+> **CodeAssistant** — 终端里的 Python 原生智能编程伙伴
 >
 > Python-native intelligent coding companion in your terminal

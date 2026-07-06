@@ -1,4 +1,4 @@
-# Gitignore for MAHE project
+# Gitignore for CodeAssistant project
 
 # Python
 __pycache__/
@@ -34,6 +34,6 @@ Thumbs.db
 # Logs
 *.log
 
-# MAHE runtime data (generated at runtime, not source code)
-.mahe/
+# CodeAssistant runtime data (generated at runtime, not source code)
+.codeassistant/
 *.pyc

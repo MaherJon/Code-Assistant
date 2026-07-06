@@ -2,8 +2,8 @@
 
 import pytest
 
-from mahe.core.message import Message, MessageRole, MessageHistory
-from mahe.context.memory import SessionMemory
+from codeassistant.core.message import Message, MessageRole, MessageHistory
+from codeassistant.context.memory import SessionMemory
 
 
 class TestMessage:
@@ -106,11 +106,11 @@ class TestSessionMemory:
     """Tests for SessionMemory."""
 
     def test_init_with_system_prompt(self):
-        memory = SessionMemory(system_prompt="You are MAHE.")
+        memory = SessionMemory(system_prompt="You are CodeAssistant.")
         messages = memory.get_messages_for_llm()
         assert len(messages) == 1
         assert messages[0]["role"] == "system"
-        assert "MAHE" in messages[0]["content"]
+        assert "CodeAssistant" in messages[0]["content"]
 
     def test_add_messages(self):
         memory = SessionMemory(system_prompt="system")

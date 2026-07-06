@@ -3,8 +3,8 @@
 import os
 import pytest
 
-from mahe.tools.base import ToolPermission, ToolResult
-from mahe.tools.file_tools import ReadFile, WriteFile, EditFile, GlobTool, GrepTool
+from codeassistant.tools.base import ToolPermission, ToolResult
+from codeassistant.tools.file_tools import ReadFile, WriteFile, EditFile, GlobTool, GrepTool
 
 
 class TestReadFile:

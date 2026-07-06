@@ -4,8 +4,8 @@ import os
 import pytest
 from click.testing import CliRunner
 
-from mahe.main import main
-from mahe.cli.commands import ask, chat, config
+from codeassistant.main import main
+from codeassistant.cli.commands import ask, chat, config
 
 
 @pytest.fixture
@@ -20,7 +20,7 @@ class TestMainCLI:
     def test_help(self, runner):
         result = runner.invoke(main, ["--help"])
         assert result.exit_code == 0
-        assert "MAHE" in result.output
+        assert "CodeAssistant" in result.output
         assert "chat" in result.output
         assert "ask" in result.output
         assert "config" in result.output
@@ -41,7 +41,7 @@ class TestConfigCommand:
     def test_config_list(self, runner):
         result = runner.invoke(config, ["--list"])
         assert result.exit_code == 0
-        assert "MAHE Configuration" in result.output
+        assert "CodeAssistant Configuration" in result.output
         assert "Provider" in result.output
         assert "Model" in result.output
 
