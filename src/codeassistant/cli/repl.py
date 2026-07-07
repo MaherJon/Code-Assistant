@@ -325,11 +325,39 @@ class REPL:
             description = tool.render_input(**params)
             self.renderer.confirm_panel(tool.name, description)
 
-            # Read single keystroke
+            # Build single-key key bindings for instant response
+            confirm_bindings = KeyBindings()
+
+            @confirm_bindings.add("y")
+            @confirm_bindings.add("Y")
+            def _(event):
+                event.current_buffer.insert_text("y")
+                event.current_buffer.validate_and_handle()
+
+            @confirm_bindings.add("n")
+            @confirm_bindings.add("N")
+            def _(event):
+                event.current_buffer.insert_text("n")
+                event.current_buffer.validate_and_handle()
+
+            @confirm_bindings.add("a")
+            @confirm_bindings.add("A")
+            def _(event):
+                event.current_buffer.insert_text("a")
+                event.current_buffer.validate_and_handle()
+
+            @confirm_bindings.add("enter")
+            def _(event):
+                # Empty Enter defaults to "yes"
+                if not event.current_buffer.text.strip():
+                    event.current_buffer.insert_text("y")
+                event.current_buffer.validate_and_handle()
+
+            # Read single keystroke (immediate, no Enter needed for Y/N/A)
             try:
                 answer = await self.session.prompt_async(
-                    [("class:info", "  Choice [Y/n/a]: ")],
-                    async_=True,
+                    [("class:info", "")],
+                    key_bindings=confirm_bindings,
                 )
                 answer = answer.strip().lower()
                 if answer == "a":
@@ -337,7 +365,9 @@ class REPL:
                     self.config.permission_mode = "auto_safe"
                     if self._engine:
                         self._engine.update_config(self.config)
-                    self.renderer.success("All future operations will be auto-approved this session.")
+                    self.renderer.success(
+                        "✓ All future operations will be auto-approved this session."
+                    )
                     return True
                 if answer == "n" or answer == "no":
                     return False

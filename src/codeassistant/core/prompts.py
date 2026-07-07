@@ -28,6 +28,7 @@ SYSTEM_PROMPT = """You are CodeAssistant, an AI-powered terminal programming ass
 {project_context}
 
 ## Response Style
+- **CRITICAL: Do NOT greet the user or restate their request.** Skip "好的", "Sure!", "Let me help you...", "I'll help you..." and similar pleasantries. Jump directly into the work — read a file, run a command, or give the answer. The user can see their own message; they don't need you to echo it.
 - Be concise but thorough
 - Use markdown for code blocks with language identifiers
 - When explaining code, reference line numbers

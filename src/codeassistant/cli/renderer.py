@@ -86,7 +86,7 @@ class Renderer:
         title.append("  v0.2.0", style=self.theme.dim)
 
         subtitle = Text.assemble(
-            "AI-Powered Terminal Programming Assistant",
+            "AI-Powered Terminal Programming Assistant  ",
             "Type ",
             ("/help", f"bold {self.theme.primary}"),
             " for commands, ",
@@ -360,25 +360,48 @@ class Renderer:
             description: Human-readable description of the action
         """
         self.console.print()
+        width = min(TERMINAL_WIDTH - 4, 70)
+
         content = Text()
-        content.append(
-            f"\n {self.theme.icon_warning}  Confirm Action\n\n",
-            style=f"bold {self.theme.warning}",
-        )
-        content.append(f" Tool: ", style=self.theme.dim)
+        # Header
+        content.append(" ═══ ", style=self.theme.dim)
+        content.append("⚠", style=f"bold {self.theme.warning}")
+        content.append(" Confirm Action ", style=f"bold {self.theme.warning}")
+        content.append("═" * (width - 22), style=self.theme.dim)
+        content.append("\n\n")
+
+        # Tool name
+        content.append("   Tool:   ", style=f"bold {self.theme.dim}")
         content.append(f"{tool_name}\n", style=f"bold {self.theme.primary}")
-        content.append(f" Action: ", style=self.theme.dim)
-        content.append(f"{description}\n\n", style="white")
-        content.append(
-            f" [Y] Approve  [N] Deny  [A] Approve All",
-            style=self.theme.dim,
-        )
+
+        # Action description
+        content.append("   Action: ", style=f"bold {self.theme.dim}")
+        # Wrap description
+        wrapped_desc = textwrap.fill(description, width=width - 14)
+        content.append(f"{wrapped_desc}\n\n", style="white")
+
+        # Separator
+        content.append("   " + "─" * (width - 6) + "\n\n", style=self.theme.muted)
+
+        # Options - prominent and color-coded
+        content.append("   ", style="")
+        # Y - Approve (green, default)
+        content.append("[Y]", style=f"bold {self.theme.success} reverse")
+        content.append(" Approve     ", style=f"bold {self.theme.success}")
+        # N - Deny (red)
+        content.append("[N]", style=f"bold {self.theme.error} reverse")
+        content.append(" Deny       ", style=f"bold {self.theme.error}")
+        # A - Approve All (yellow)
+        content.append("[A]", style=f"bold {self.theme.warning} reverse")
+        content.append(" Approve All", style=f"bold {self.theme.warning}")
+        content.append("\n\n")
+        content.append("   Press a key to confirm...", style=self.theme.muted)
 
         self.console.print(Panel(
             content,
             border_style=self.theme.warning,
             box=ROUNDED,
-            padding=(0, 1),
+            padding=(1, 2),
         ))
 
     # ── Progress & Spinner ───────────────────────────────────────
