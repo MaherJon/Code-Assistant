@@ -23,6 +23,7 @@ from codeassistant.tools.git_tools import GitStatus, GitDiff, GitLog, GitBranch,
 from codeassistant.tools.code_tools import AnalyzeCode, PythonDefinition, PythonReferences, PythonHover
 from codeassistant.tools.memory_tools import SaveMemory, RecallMemory, ListMemories
 from codeassistant.tools.test_tools import RunTests
+from codeassistant.tools.viz_tools import CreateVisualization
 from codeassistant.tools.subagent_tools import DelegateTask
 from codeassistant.context.compression import ContextCompressor
 from codeassistant.context.persistent import PersistentMemory
@@ -93,6 +94,8 @@ class Engine:
         self._tool_registry.register(ListMemories(project_root=wd))
         # Test tools
         self._tool_registry.register(RunTests(working_dir=wd))
+        # Visualization tools
+        self._tool_registry.register(CreateVisualization(working_dir=wd))
         # SubAgent delegation tool (registered without manager, set later)
         self._delegate_tool = DelegateTask()
         self._tool_registry.register(self._delegate_tool)

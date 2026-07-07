@@ -33,6 +33,7 @@ Thumbs.db
 
 # Logs
 *.log
+*.png
 
 # CodeAssistant runtime data (generated at runtime, not source code)
 .codeassistant/
