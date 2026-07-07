@@ -410,12 +410,16 @@ class REPL:
                 "confirm.hint": "italic ansibrightblack",
             })
 
+            # Use an isolated PromptSession so the bottom_toolbar from
+            # this confirm prompt does not leak into the main REPL prompt.
+            confirm_session = PromptSession(
+                style=confirm_style,
+                key_bindings=confirm_bindings,
+            )
             try:
-                answer = await self.session.prompt_async(
+                answer = await confirm_session.prompt_async(
                     [("class:info", "")],
-                    key_bindings=confirm_bindings,
                     bottom_toolbar=_confirm_toolbar,
-                    style=confirm_style,
                 )
                 answer = answer.strip().lower()
                 if answer == "a":
@@ -424,7 +428,7 @@ class REPL:
                     if self._engine:
                         self._engine.update_config(self.config)
                     self.renderer.success(
-                        "✓ All future operations will be auto-approved this session."
+                        "All future operations will be auto-approved this session."
                     )
                     return True
                 if answer == "n" or answer == "no":

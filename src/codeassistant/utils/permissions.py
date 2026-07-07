@@ -79,6 +79,8 @@ class PermissionChecker:
             path = params.get("path", "")
             if self._is_blocked_path(path):
                 return ToolPermission.BLOCKED
+            # Auto-approve normal file writes (Claude Code behavior)
+            return ToolPermission.SAFE
 
         elif tool.name == "run_shell":
             command = params.get("command", "")
