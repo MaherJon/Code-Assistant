@@ -85,15 +85,14 @@ class Renderer:
         title.append("CodeAssistant", style=f"bold {self.theme.primary}")
         title.append("  v0.2.0", style=self.theme.dim)
 
-        subtitle_parts = []
-        subtitle_parts.append("AI-Powered Terminal Programming Assistant")
-        subtitle_parts.append("Type ")
-        subtitle_parts.append("/help", style=f"bold {self.theme.primary}")
-        subtitle_parts.append(" for commands, ")
-        subtitle_parts.append("/exit", style=f"bold {self.theme.primary}")
-        subtitle_parts.append(" to quit")
-
-        subtitle = Text.assemble(*subtitle_parts)
+        subtitle = Text.assemble(
+            "AI-Powered Terminal Programming Assistant",
+            "Type ",
+            ("/help", f"bold {self.theme.primary}"),
+            " for commands, ",
+            ("/exit", f"bold {self.theme.primary}"),
+            " to quit",
+        )
 
         self.console.print()
         self.console.print(Panel(
