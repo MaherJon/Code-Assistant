@@ -10,7 +10,9 @@ Provides a polished, Claude Code-like visual experience with:
 - Syntax-highlighted code blocks and diffs
 """
 
+import os
 import shutil
+import sys
 import textwrap
 from typing import Optional
 
@@ -64,10 +66,34 @@ class Renderer:
     """
 
     def __init__(self, console: Optional[Console] = None, theme: ThemeConfig = None):
-        self.console = console or Console(highlight=False)
+        self.console = console or self._create_console()
         self.theme = theme or DARK_THEME
         self._streaming_live: Optional[Live] = None
         self._streaming_buffer: str = ""
+
+    @staticmethod
+    def _create_console() -> Console:
+        """Create a Rich Console with proper Windows encoding handling.
+
+        On Windows with GBK locale, Rich's legacy console renderer can
+        fail on Unicode characters (emoji, special symbols). We try to
+        reconfigure stdout for UTF-8 first, then fall back gracefully.
+        """
+        # Try to enable UTF-8 on Windows (Python 3.7+)
+        try:
+            if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
+                sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+        # Prefer the modern VT renderer on Windows
+        try:
+            if sys.platform == "win32":
+                return Console(highlight=False, force_terminal=True)
+        except Exception:
+            pass
+
+        return Console(highlight=False)
 
     # ── Welcome & Headers ───────────────────────────────────────
 
@@ -353,7 +379,11 @@ class Renderer:
     # ── Permission Prompts ───────────────────────────────────────
 
     def confirm_panel(self, tool_name: str, description: str) -> None:
-        """Display a permission confirmation prompt.
+        """Display a permission confirmation header.
+
+        Shows only the contextual info (tool name + action).
+        The interactive option buttons are rendered by the
+        prompt_toolkit bottom toolbar and disappear after confirmation.
 
         Args:
             tool_name: Name of the tool needing confirmation
@@ -378,36 +408,7 @@ class Renderer:
         content.append("   Action: ", style=f"bold {self.theme.dim}")
         # Wrap description
         wrapped_desc = textwrap.fill(description, width=width - 14)
-        content.append(f"{wrapped_desc}\n\n", style="white")
-
-        # Separator
-        content.append("   " + "─" * (width - 6) + "\n\n", style=self.theme.muted)
-
-        # Options - prominent and color-coded
-        content.append("   ", style="")
-        # Y - Approve (green, default)
-        content.append("[Y]", style=f"bold {self.theme.success} reverse")
-        content.append(" Approve     ", style=f"bold {self.theme.success}")
-        # N - Deny (red)
-        content.append("[N]", style=f"bold {self.theme.error} reverse")
-        content.append(" Deny       ", style=f"bold {self.theme.error}")
-        # A - Approve All (yellow)
-        content.append("[A]", style=f"bold {self.theme.warning} reverse")
-        content.append(" Approve All", style=f"bold {self.theme.warning}")
-        content.append("\n\n")
-        # Keyboard hints
-        content.append("   ", style="")
-        content.append("← →", style=f"bold {self.theme.primary}")
-        content.append(" to choose", style=self.theme.muted)
-        content.append("  ·  ", style=self.theme.muted)
-        content.append("Enter", style=f"bold {self.theme.primary}")
-        content.append(" to confirm", style=self.theme.muted)
-        content.append("  ·  ", style=self.theme.muted)
-        content.append("Y/N/A", style=f"bold {self.theme.primary}")
-        content.append(" quick-select", style=self.theme.muted)
-        content.append("  ·  ", style=self.theme.muted)
-        content.append("Ctrl+C", style=f"bold {self.theme.primary}")
-        content.append(" to cancel", style=self.theme.muted)
+        content.append(f"{wrapped_desc}\n", style="white")
 
         self.console.print(Panel(
             content,
@@ -583,6 +584,124 @@ class Renderer:
         )
         self.console.print(Panel(
             syntax,
+            border_style=self.theme.code_border,
+            box=ROUNDED,
+            padding=(0, 1),
+        ))
+
+    # ── Language Detection ─────────────────────────────────────────
+
+    # Map file extensions to language names for syntax highlighting
+    _EXT_TO_LANG = {
+        ".py": "python", ".pyw": "python", ".pyx": "python",
+        ".js": "javascript", ".mjs": "javascript", ".cjs": "javascript",
+        ".ts": "typescript", ".tsx": "typescript", ".jsx": "javascript",
+        ".go": "go", ".rs": "rust", ".rlib": "rust",
+        ".java": "java", ".kt": "kotlin", ".kts": "kotlin",
+        ".c": "c", ".h": "c", ".cpp": "cpp", ".cc": "cpp",
+        ".cxx": "cpp", ".hpp": "cpp", ".hxx": "cpp",
+        ".rb": "ruby", ".php": "php", ".swift": "swift",
+        ".sql": "sql", ".sh": "bash", ".bash": "bash",
+        ".zsh": "bash", ".ps1": "powershell", ".psm1": "powershell",
+        ".yaml": "yaml", ".yml": "yaml", ".toml": "toml",
+        ".json": "json", ".xml": "xml", ".html": "html",
+        ".css": "css", ".scss": "scss", ".sass": "sass",
+        ".md": "markdown", ".mdx": "markdown",
+        ".vim": "vim", ".lua": "lua", ".r": "r",
+        ".dockerfile": "dockerfile", ".makefile": "makefile",
+        ".ini": "ini", ".cfg": "ini", ".conf": "ini",
+        ".txt": "text", ".log": "text",
+    }
+
+    @classmethod
+    def _detect_language(cls, file_path: str) -> str:
+        """Detect programming language from file extension.
+
+        Args:
+            file_path: File path or name
+
+        Returns:
+            Language name for syntax highlighting (defaults to 'text')
+        """
+        filename = os.path.basename(file_path).lower()
+        # Handle special filenames
+        if filename == "dockerfile":
+            return "dockerfile"
+        if filename == "makefile":
+            return "makefile"
+        # Check extension
+        _, ext = os.path.splitext(filename)
+        return cls._EXT_TO_LANG.get(ext.lower(), "text")
+
+    # ── Code Preview ──────────────────────────────────────────────
+
+    def code_preview(self, file_path: str, code: str = None,
+                     max_lines: int = 40, title: str = None) -> None:
+        """Display a code preview panel with syntax highlighting.
+
+        Shows file contents in a bordered panel with line numbers and
+        auto-detected language syntax highlighting. For large files,
+        content is truncated to max_lines.
+
+        Args:
+            file_path: Path to the file (used for title and language detection)
+            code: Optional code content. If None, reads from file_path.
+            max_lines: Maximum lines to display before truncation
+            title: Optional panel title (defaults to file path)
+        """
+        # Read file content if not provided
+        if code is None:
+            try:
+                with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+                    code = f.read()
+            except Exception as e:
+                self.console.print(f"  [{self.theme.dim}]Preview unavailable: {e}[/]")
+                return
+
+        if not code.strip():
+            self.console.print(f"  [{self.theme.dim}](empty file)[/]")
+            return
+
+        # Truncate if needed
+        lines = code.splitlines()
+        total_lines = len(lines)
+        truncated = total_lines > max_lines
+
+        if truncated:
+            display_code = "\n".join(lines[:max_lines])
+            display_code += f"\n\n... ({total_lines - max_lines} more lines)"
+        else:
+            display_code = code
+
+        # Detect language
+        language = self._detect_language(file_path)
+
+        # Build title
+        if title is None:
+            rel_path = file_path
+            # Try to show a shorter relative path
+            cwd = os.getcwd()
+            try:
+                rel = os.path.relpath(file_path, cwd)
+                if not rel.startswith(".."):
+                    rel_path = rel
+            except ValueError:
+                pass
+            line_info = f"{total_lines} lines" if not truncated else f"{total_lines} lines, showing {max_lines}"
+            title = f"[file] {rel_path}  ({line_info})"
+
+        # Render syntax-highlighted code in a panel
+        syntax = Syntax(
+            display_code,
+            language,
+            theme="monokai",
+            line_numbers=True,
+            word_wrap=True,
+        )
+        self.console.print(Panel(
+            syntax,
+            title=title,
+            title_align="left",
             border_style=self.theme.code_border,
             box=ROUNDED,
             padding=(0, 1),

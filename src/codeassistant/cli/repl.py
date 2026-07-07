@@ -327,6 +327,19 @@ class REPL:
                 "duration": duration,
             })
 
+            # Show code preview for file operations
+            if result.success and tool.name in ("read_file", "write_file", "edit_file"):
+                file_path = result.metadata.get("path", "")
+                if not file_path:
+                    file_path = params.get("path", "")
+                if file_path and os.path.isfile(file_path):
+                    # For write_file, use the content from params directly
+                    if tool.name == "write_file" and "content" in params:
+                        code = params.get("content", "")
+                        self.renderer.code_preview(file_path, code=code)
+                    else:
+                        self.renderer.code_preview(file_path)
+
         # ── Callback: Permission confirmation ─────────────────
         async def _on_confirm(tool, params: dict) -> bool:
             description = tool.render_input(**params)
