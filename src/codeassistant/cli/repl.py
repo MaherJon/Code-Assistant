@@ -25,6 +25,7 @@ from prompt_toolkit.completion import (
     WordCompleter,
     merge_completers,
 )
+from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
@@ -305,6 +306,12 @@ class REPL:
 
         # ── Callback: Tool execution started ──────────────────
         def _on_tool_start(tool, params: dict):
+            nonlocal stream_started
+            # End the current thinking stream so the next iteration
+            # starts fresh — prevents text stacking across tool calls
+            if stream_started:
+                self.renderer.streaming_end()
+                stream_started = False
             self.renderer.tool_card_start(tool.name, params, tool)
 
         # ── Callback: Tool execution completed ────────────────
@@ -379,27 +386,36 @@ class REPL:
                 event.current_buffer.insert_text("n")
                 event.current_buffer.validate_and_handle()
 
-            # Dynamic bottom toolbar showing selectable options
+            # Dynamic bottom toolbar using prompt_toolkit styles
+            # (NOT Rich markup — prompt_toolkit needs its own style tuples)
             def _confirm_toolbar():
                 parts = []
-                for i, (key, label, color) in enumerate(OPTIONS):
+                for i, (key, label, _color) in enumerate(OPTIONS):
                     if i == selection["idx"]:
-                        # Selected: highlighted with brackets and reverse video
-                        parts.append(
-                            f"[{color}][[{key}]] {label}[/{color}]"
-                        )
+                        # Selected: reverse-video highlight for clear visibility
+                        parts.append(("class:confirm.selected", f" [{key}] {label} "))
                     else:
                         # Not selected: dimmed
-                        parts.append(
-                            f"[ansibrightblack] {key}  {label} [/ansibrightblack]"
-                        )
-                return "  " + "    ".join(parts) + "    (← → to choose, Enter to confirm)"
+                        parts.append(("class:confirm.dimmed", f"  {key}   {label}  "))
+                    if i < len(OPTIONS) - 1:
+                        parts.append(("", "  "))
+                parts.append(("", "    "))
+                parts.append(("class:confirm.hint", "← → to choose  ·  Enter to confirm  ·  Y/N/A quick-select"))
+                return FormattedText(parts)
+
+            # Style for the confirmation prompt toolbar
+            confirm_style = Style.from_dict({
+                "confirm.selected": "bold reverse ansigreen",
+                "confirm.dimmed": "ansibrightblack",
+                "confirm.hint": "italic ansibrightblack",
+            })
 
             try:
                 answer = await self.session.prompt_async(
                     [("class:info", "")],
                     key_bindings=confirm_bindings,
                     bottom_toolbar=_confirm_toolbar,
+                    style=confirm_style,
                 )
                 answer = answer.strip().lower()
                 if answer == "a":

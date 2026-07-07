@@ -395,7 +395,19 @@ class Renderer:
         content.append("[A]", style=f"bold {self.theme.warning} reverse")
         content.append(" Approve All", style=f"bold {self.theme.warning}")
         content.append("\n\n")
-        content.append("   Press a key to confirm...", style=self.theme.muted)
+        # Keyboard hints
+        content.append("   ", style="")
+        content.append("← →", style=f"bold {self.theme.primary}")
+        content.append(" to choose", style=self.theme.muted)
+        content.append("  ·  ", style=self.theme.muted)
+        content.append("Enter", style=f"bold {self.theme.primary}")
+        content.append(" to confirm", style=self.theme.muted)
+        content.append("  ·  ", style=self.theme.muted)
+        content.append("Y/N/A", style=f"bold {self.theme.primary}")
+        content.append(" quick-select", style=self.theme.muted)
+        content.append("  ·  ", style=self.theme.muted)
+        content.append("Ctrl+C", style=f"bold {self.theme.primary}")
+        content.append(" to cancel", style=self.theme.muted)
 
         self.console.print(Panel(
             content,
