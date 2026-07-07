@@ -325,39 +325,81 @@ class REPL:
             description = tool.render_input(**params)
             self.renderer.confirm_panel(tool.name, description)
 
-            # Build single-key key bindings for instant response
+            # Arrow-key navigable confirmation (Claude Code style)
+            OPTIONS = [
+                ("Y", "Approve", "ansigreen"),
+                ("N", "Deny", "ansired"),
+                ("A", "Approve All", "ansiyellow"),
+            ]
+            selection = {"idx": 0}  # mutable so toolbar sees updates
+
             confirm_bindings = KeyBindings()
+
+            @confirm_bindings.add("left")
+            def _(event):
+                """Left arrow: move selection left."""
+                selection["idx"] = (selection["idx"] - 1) % len(OPTIONS)
+
+            @confirm_bindings.add("right")
+            def _(event):
+                """Right arrow: move selection right."""
+                selection["idx"] = (selection["idx"] + 1) % len(OPTIONS)
 
             @confirm_bindings.add("y")
             @confirm_bindings.add("Y")
             def _(event):
+                """Press Y: approve immediately."""
                 event.current_buffer.insert_text("y")
                 event.current_buffer.validate_and_handle()
 
             @confirm_bindings.add("n")
             @confirm_bindings.add("N")
             def _(event):
+                """Press N: deny immediately."""
                 event.current_buffer.insert_text("n")
                 event.current_buffer.validate_and_handle()
 
             @confirm_bindings.add("a")
             @confirm_bindings.add("A")
             def _(event):
+                """Press A: approve all immediately."""
                 event.current_buffer.insert_text("a")
                 event.current_buffer.validate_and_handle()
 
             @confirm_bindings.add("enter")
             def _(event):
-                # Empty Enter defaults to "yes"
-                if not event.current_buffer.text.strip():
-                    event.current_buffer.insert_text("y")
+                """Enter: confirm currently selected option."""
+                labels = ["y", "n", "a"]
+                event.current_buffer.insert_text(labels[selection["idx"]])
                 event.current_buffer.validate_and_handle()
 
-            # Read single keystroke (immediate, no Enter needed for Y/N/A)
+            @confirm_bindings.add("c-c")
+            def _(event):
+                """Ctrl+C: cancel / deny."""
+                event.current_buffer.insert_text("n")
+                event.current_buffer.validate_and_handle()
+
+            # Dynamic bottom toolbar showing selectable options
+            def _confirm_toolbar():
+                parts = []
+                for i, (key, label, color) in enumerate(OPTIONS):
+                    if i == selection["idx"]:
+                        # Selected: highlighted with brackets and reverse video
+                        parts.append(
+                            f"[{color}][[{key}]] {label}[/{color}]"
+                        )
+                    else:
+                        # Not selected: dimmed
+                        parts.append(
+                            f"[ansibrightblack] {key}  {label} [/ansibrightblack]"
+                        )
+                return "  " + "    ".join(parts) + "    (← → to choose, Enter to confirm)"
+
             try:
                 answer = await self.session.prompt_async(
                     [("class:info", "")],
                     key_bindings=confirm_bindings,
+                    bottom_toolbar=_confirm_toolbar,
                 )
                 answer = answer.strip().lower()
                 if answer == "a":
